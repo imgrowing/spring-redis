@@ -1,0 +1,5 @@
+services:
+  redis4:
+    image: redis:4.0.12
+    ports:
+    - 6379:6379

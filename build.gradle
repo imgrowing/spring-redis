@@ -1,0 +1,39 @@
+buildscript {
+    ext {
+        springBootVersion = '1.5.22.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
+
+
+group = 'ex'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.springframework.boot:spring-boot-starter-web'
+
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.11'
+    compile group: 'com.google.guava', name: 'guava', version: '30.0-jre'
+    compile group: 'joda-time', name: 'joda-time', version: '2.10.1'
+
+//    runtime 'com.h2database:h2'
+//    runtime 'mysql:mysql-connector-java'
+
+    compileOnly 'org.projectlombok:lombok'
+
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+}
