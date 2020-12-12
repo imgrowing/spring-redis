@@ -1,8 +1,8 @@
 package my;
 
 import lombok.extern.slf4j.Slf4j;
-import my.domain.Car;
-import my.domain.CarRepository;
+import my.domain.car.Car;
+import my.domain.car.CarRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -11,10 +11,8 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.util.StopWatch;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @EnableCaching
@@ -36,11 +34,11 @@ public class SpringRedisApplication implements CommandLineRunner {
         log.info("no3::" + carReposotiry.getByName("BMW"));
         log.info("no4::" + carReposotiry.getByName("제네시스"));
         log.info("no5::" + carReposotiry.getByName("레이"));
+//
+//        log.info("no1::" + carReposotiry.getByName("소나타"));
+//        log.info("no2::" + carReposotiry.getByName("K5"));
 
-        log.info("no1::" + carReposotiry.getByName("소나타"));
-        log.info("no2::" + carReposotiry.getByName("K5"));
-
-//        test();
+        test();
 //        test();
 //        testParallel();
 //        testParallel();

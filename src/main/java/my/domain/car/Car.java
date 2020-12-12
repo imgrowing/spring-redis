@@ -1,4 +1,4 @@
-package my.domain;
+package my.domain.car;
 
 import lombok.Getter;
 import lombok.Setter;
