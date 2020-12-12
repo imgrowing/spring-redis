@@ -48,10 +48,14 @@ public class RedisConfig  {
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
         JedisPoolConfig poolConfig = new JedisPoolConfig();
-        poolConfig.setMinIdle(16);
-        poolConfig.setMaxIdle(16);
-        poolConfig.setMaxTotal(16);
-        poolConfig.setTestOnBorrow(true);
+        poolConfig.setMinIdle(15);
+        poolConfig.setMaxIdle(15);
+        poolConfig.setMaxTotal(15);
+        //poolConfig.setTestOnBorrow(true); // getConnection 마다 체크하지 말고, idle시에 체크하도록 하자(약 30~40% 성능향상)
+        // 5분 주기로 5개의 connection이 유효한지 검사한다. 15분 경과시 모든 connection의 검사가 이루어진다.
+        poolConfig.setTestWhileIdle(true);
+        poolConfig.setTimeBetweenEvictionRunsMillis(5 * 60L * 1000L); // 5min
+        poolConfig.setNumTestsPerEvictionRun(5); // 5 개
 
         JedisConnectionFactory factory = new JedisConnectionFactory(poolConfig);
         factory.setHostName(host);
