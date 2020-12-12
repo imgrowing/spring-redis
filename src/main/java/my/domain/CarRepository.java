@@ -17,7 +17,7 @@ public class CarRepository {
 
     @Cacheable(cacheNames = CACHE_NAME_CAR, key = "#name")
     public Car getByName(String name) {
-        makeSlowService();
+        //makeSlowService();
         Car car = new Car(name);
         return randomCarColor(car);
     }
