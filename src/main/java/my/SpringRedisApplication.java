@@ -37,11 +37,14 @@ public class SpringRedisApplication implements CommandLineRunner {
         log.info("no4::" + carReposotiry.getByName("제네시스"));
         log.info("no5::" + carReposotiry.getByName("레이"));
 
+        log.info("no1::" + carReposotiry.getByName("소나타"));
+        log.info("no2::" + carReposotiry.getByName("K5"));
+
 //        test();
 //        test();
-        testParallel();
-        testParallel();
-        testParallel();
+//        testParallel();
+//        testParallel();
+//        testParallel();
     }
 
     private void test() {
