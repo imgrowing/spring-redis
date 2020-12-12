@@ -1,7 +1,14 @@
 package my.config;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.support.NullValue;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheManager;
@@ -10,8 +17,10 @@ import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.util.StringUtils;
 import redis.clients.jedis.JedisPoolConfig;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -74,10 +83,15 @@ public class RedisConfig  {
         // GenericJackson2JsonRedisSerializer 사용
         // 커스텀 ObjectMapper를 사용하고 싶으면, 반드시 GenericJackson2JsonRedisSerializer의 생성자에 있는 ObjectMapper 옵션을 포함하도록 한다.
         // 그렇지 않으면 LinkedHashMap으로 반환되어 캐스팅 에러가 발생한다.
+        ObjectMapper mapper = new ObjectMapper();
+        //mapper.registerModule(new SimpleModule().addSerializer(new NullValueSerializer(null)));
+        mapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
         template.setKeySerializer(new StringRedisSerializer());
-        template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+        template.setValueSerializer(new GenericJackson2JsonRedisSerializer(mapper));
         template.setHashKeySerializer(new StringRedisSerializer());
-        template.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
+        template.setHashValueSerializer(new GenericJackson2JsonRedisSerializer(mapper));
 
         /*
         Jackson2JsonRedisSerializer<Object> 사용
@@ -94,5 +108,41 @@ public class RedisConfig  {
         */
 
         return template;
+    }
+
+    // Copy from GenericJackson2JsonRedisSerializer
+    /**
+     * {@link StdSerializer} adding class information required by default typing. This allows de-/serialization of
+     * {@link NullValue}.
+     *
+     * @author Christoph Strobl
+     * @since 1.8
+     */
+    private class NullValueSerializer extends StdSerializer<NullValue> {
+
+        private static final long serialVersionUID = 1999052150548658808L;
+        private final String classIdentifier;
+
+        /**
+         * @param classIdentifier can be {@literal null} and will be defaulted to {@code @class}.
+         */
+        NullValueSerializer(String classIdentifier) {
+
+            super(NullValue.class);
+            this.classIdentifier = StringUtils.hasText(classIdentifier) ? classIdentifier : "@class";
+        }
+
+        /*
+         * (non-Javadoc)
+         * @see com.fasterxml.jackson.databind.ser.std.StdSerializer#serialize(java.lang.Object, com.fasterxml.jackson.core.JsonGenerator, com.fasterxml.jackson.databind.SerializerProvider)
+         */
+        @Override
+        public void serialize(NullValue value, JsonGenerator jgen, SerializerProvider provider)
+                throws IOException {
+
+            jgen.writeStartObject();
+            jgen.writeStringField(classIdentifier, NullValue.class.getName());
+            jgen.writeEndObject();
+        }
     }
 }
