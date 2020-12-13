@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -23,7 +24,7 @@ import static org.junit.Assert.assertEquals;
 public class OperationsForValueTest {
 
     @Autowired
-    private RedisTemplate<String, String> stringRedisTemplate;
+    private StringRedisTemplate stringRedisTemplate;
 
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
